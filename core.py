@@ -62,9 +62,16 @@ def generate_assignments(employees):
         raise ValueError("Au moins 2 employés requis.")
 
     shuffled = employees[:]
-    random.shuffle(shuffled)
+    while True:
+        random.shuffle(shuffled)
+        # create couples
+        assignments = list(zip(employees, shuffled))
 
-    return list(zip(employees, shuffled[1:] + shuffled[:1]))
+        # check for self-pick
+        has_self_assignment = any(giver[1] == receiver[1] for giver, receiver in assignments)
+
+        if not has_self_assignment:
+            return assignments
 
 def build_assignments(employees):
     if is_initialized():
@@ -84,7 +91,7 @@ def build_assignments(employees):
                 break
 
         out.append(encrypt(f"{giver}{SEPARATOR}{receiver}", key))
-        keys.append((giver, email, key))
+        keys.append((giver, email, key, receiver))
 
     ASSIGN_FILE.write_text("\n".join(out))
     if IS_PROD:

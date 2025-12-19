@@ -1,12 +1,15 @@
 from core import load_employees, build_assignments, resolve_assignment
 from gs_smtp import send_key_email
+# from pathlib import Path
 import sys
+import time
 
 
 def run_cli(employees):
     try:
+        start = time.time()
         keys = build_assignments(employees)
-        for name, mail, key in keys:
+        for name, mail, key, _ in keys:
             send_key_email(
                 smtp_host = "smtp.gmail.com",
                 smtp_port = 587,
@@ -15,7 +18,12 @@ def run_cli(employees):
                 key = key
             )
 
-        print("Assignations générées.")
+        # with open("keys_log.log", "w") as f:
+        #     for k in keys:
+        #         f.write(" - ".join(k) + '\n')
+        end = time.time()
+        print("Assignations générées.\n")
+        print("Temps écoulé:", round(end - start, 2), "secondes.")
     except RuntimeError:
         print("Déjà généré.")
 
