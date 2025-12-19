@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
-from gift_system import view
+from core import resolve_assignment
 
 
 app = FastAPI(
@@ -25,15 +25,8 @@ def ping():
 def fetch_worker_name(payload: KeyRequest):
     key = payload.key.strip()
 
-    wn = view(key)
-    if wn is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Invalid key or no assignment"
-        )
+    res = resolve_assignment(key)
+    if not res:
+        raise HTTPException(404, "Invalid key")
 
-    return {
-        'data': {
-            'worker_name': wn
-        }
-    }
+    return {"worker_name": res.split(" → ")[-1]}

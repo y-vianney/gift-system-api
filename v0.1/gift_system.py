@@ -76,12 +76,18 @@ def ensure_internal():
         state_path.write_text("EMPTY")
 
 
-def read_state() -> str:
-    return (INTERNAL_DIR / STATE_FILE).read_text().strip()
+def read_state(env: str = "dev") -> str:
+    if env == "dev":
+        return (INTERNAL_DIR / STATE_FILE).read_text().strip()
+
+    return Path(STATE_FILE).read_text().strip()
 
 
-def write_state(state: str):
-    return (INTERNAL_DIR / STATE_FILE).write_text(state)
+def write_state(state: str, env: str = "dev"):
+    if env == "dev":
+        return (INTERNAL_DIR / STATE_FILE).write_text(state)
+
+    return Path(STATE_FILE).write_text(state)
 
 
 def check_admin():
@@ -109,10 +115,10 @@ def generate_assignments(employees):
     return [(g[0], r[0], g[1]) for g, r in zip(givers, receivers)]
 
 
-def build(employees_file: str):
+def build(employees_file: str, env: str = "dev"):
     ensure_internal()
 
-    if read_state() == "INITIALIZED":
+    if read_state(env) == "INITIALIZED":
         print("⚠️ Assignation déjà réalisée.")
         if not check_admin():
             print("Accès refusé.")
@@ -135,15 +141,15 @@ def build(employees_file: str):
         send_key_email(SMTP_HOST, SMTP_PORT, giver_mail, giver, private_key)
 
     (INTERNAL_DIR / ASSIGN_FILE).write_text("\n".join(out_lines))
-    write_state("INITIALIZED")
+    write_state("INITIALIZED", env)
     print("✅ Assignations générées et chiffrées.")
 
 
-def view(key: str = None):
+def view(key: str = None, env: str = "dev"):
     ensure_internal()
 
     if not key:
-        if read_state() != "INITIALIZED":
+        if read_state(env) != "INITIALIZED":
             print("Aucune assignation disponible.")
             return None
 
@@ -152,9 +158,9 @@ def view(key: str = None):
             print("Code invalide.")
             return None
     else:
-        employees_file = os.path.dirname(os.path.abspath(__file__)) / Path("data/employees.txt")
-        if read_state() != "INITIALIZED" and employees_file.exists():
-            build(employees_file)
+        employees_file = os.path.dirname(os.path.abspath(__file__)) / Path("../data/employees.txt")
+        if read_state(env) != "INITIALIZED" and employees_file.exists():
+            build(employees_file, env)
 
     rows = (INTERNAL_DIR / ASSIGN_FILE).read_text().splitlines()
 
