@@ -97,8 +97,10 @@ def resolve_assignment(key: str):
     if not is_initialized():
         return None
 
-    rows = ASSIGN_FILE.read_text().splitlines()
-    if IS_PROD:
+    rows = []
+    if not IS_PROD and ASSIGN_FILE.exists():
+        rows = ASSIGN_FILE.read_text().splitlines()
+    elif IS_PROD:
         rows = (Path("data") / "assignments.enc").read_text().splitlines()
 
     for row in rows:
