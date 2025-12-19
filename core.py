@@ -36,10 +36,16 @@ def decrypt(cipher: str, code: str):
 # --- state ---
 
 def is_initialized():
-    return STATE_FILE.exists() and STATE_FILE.read_text().strip() == "INITIALIZED"
+    return (
+        STATE_FILE.exists() and STATE_FILE.read_text().strip() == "INITIALIZED"
+    ) or (
+        (Path("data") / "state.log").exists() and (Path("data") / "state.log").read_text().strip() == "INITIALIZED"
+    )
 
 def mark_initialized():
     STATE_FILE.write_text("INITIALIZED")
+    if IS_PROD:
+        (Path("data") / "state.log").write_text("INITIALIZED")
 
 # --- business ---
 
