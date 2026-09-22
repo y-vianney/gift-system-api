@@ -4,16 +4,6 @@ A modern, secure, and professional Python platform for managing Secret Santa-sty
 
 ---
 
-## Highlights
-
-- 🎅 **Dual-Role Dashboard (Single Private Key)**: Each participant uses a single confidential key to view their assigned recipient (as Santa) and access their secret letterbox (as Child).
-- ✉️ **Anonymous Letterbox**: Santa can ask questions anonymously to their Child to discover gift preferences without spoiling the surprise. The Child can reply directly.
-- 🔒 **Strong Cryptography**: Keys are salted and hashed (SHA-256) in SQLite. Conversation threads are encrypted using Fernet (AES-128-CBC + HMAC-SHA256).
-- ⚡ **Lightweight & Fast**: Built with FastAPI, SQLite3 (zero-maintenance embedded DB), and a responsive festive Web UI (Tailwind CSS).
-- 🔄 **Backward Compatible**: Retains the legacy `POST /worker-name` endpoint and root-level compatibility shims (`api.py`, `cli.py`, `core.py`, `config.py`, `gs_smtp.py`).
-
----
-
 ## Project Structure
 
 ```text
@@ -112,7 +102,7 @@ Run the server:
 ```bash
 uvicorn gift_system.api:app --reload
 ```
-- Open `http://localhost:8000` in any browser to use the interactive festive dashboard.
+- Open `http://localhost:8000` in any browser to use the app.
 - API Documentation is available at `http://localhost:8000/docs`.
 
 #### Main Endpoints:
