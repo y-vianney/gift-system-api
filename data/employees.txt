@@ -1,20 +1,24 @@
-Morrell|yvesmorelkacou842@gmail.com
-Axel|yvay03@gmail.com
-Signo|guysergesigno@gmail.com
-Marc Alex|koffimarcalex6@gmail.com
-Léandre|leandrechristemmanuel@gmail.com
-Yasmine|yasminekamara53@gmail.com
-Valy|valybamba56@gmail.com
-Ismael|sogodogo.ismael01@gmail.com
-Mme GOORE Lou|mariefrancegoore@univmetiers.ci
-M. Behibro|behibro.bkf@gmail.com
-Davis|ntayeruben2@gmail.com
-Tano Franck|tanoguyfranck22@gmail.com
-Tioté|saibdiourte69@gmail.com
-M. Aka|ackahjeanb@gmail.com
-Brou|ange0145@gmail.com
-M. Nazaire|astairenazaire@gmail.com
-Sarah|bed.sar77@icloud.com
-Sarah B.|sarahbah69@gmail.com
-Mme Amian|valerie.amian82@gmail.com
-Mme Konin|koninmariepascale@univmetiers.ci
+Morrell      | yvesmorelkacou842@gmail.com     | active  | public
+Axel         | yvay03@gmail.com                | active  | public
+Signo        | guysergesigno@gmail.com         | inactive| -
+Marc Alex    | koffimarcalex6@gmail.com        | active  | public
+Léandre      | leandrechristemmanuel@gmail.com | active  | public
+Yasmine      | yasminekamara53@gmail.com       | active  | public
+Valy         | valybamba56@gmail.com           | inactive| -
+Ismael       | sogodogo.ismael01@gmail.com     | active  | public
+Mme GOORE Lou| mariefrancegoore@univmetiers.ci | active  | private
+M. Behibro   | behibro.bkf@gmail.com           | active  | private
+Davis        | ntayeruben2@gmail.com           | active  | public
+Tano Franck  | tanoguyfranck22@gmail.com       | active  | public
+Tioté        | saibdiourte69@gmail.com         | active  | public
+M. Aka       | ackahjeanb@gmail.com            | active  | private
+M. Brou      | ange0145@gmail.com              | active  | private
+M. Nazaire   | astairenazaire@gmail.com        | active  | private
+Sarah        | sarahbah69@gmail.com            | active  | public
+Stéphanie    | bed.sar77@icloud.com            | active  | public
+Mme Amian    | valerie.amian82@gmail.com       | active  | private
+Mme Konin    | koninmariepascale@univmetiers.ci| active  | private
+Joverson     | neverlolkon2021@icloud.com      | active  | public
+Paul Eliel   | -                               | active  | public
+Chirst Oi    | oichristkouame920@gmail.com     | active  | public
+Saphira      | dominiquekouadio50@gmail.com    | active  | public

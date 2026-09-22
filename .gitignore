@@ -1,1 +1,9 @@
-.gs-venv
+__pycache__/
+*.py[cod]
+.gs-venv/
+.venv/
+.env
+*.log
+*.db
+.pytest_cache/
+*.egg-info/
