@@ -1,3 +1,5 @@
+# type: ignore
+
 from __future__ import annotations
 
 import json
@@ -88,7 +90,7 @@ async def websocket_thread_chat(
     """
     clean_key = key.strip()
     try:
-        caller_role, participant_name = verify_thread_access(thread_id, clean_key)
+        caller_role, _ = verify_thread_access(thread_id, clean_key)
     except ChatAccessError as exc:
         await websocket.close(code=1008, reason=str(exc))
         return

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>WebSocket Test</h1>
+  <span id="info_msg"></span>
+
+  <form method="post" data-purpose="connect">
+    <input type="text" name="key" placeholder="Enter the key" required>
+    <button type="submit">Connect</button>
+  </form>
+
+  <div id="ws_messages"></div>
+
+  <span id="err_msg"></span>
+
+  <script>
+    const form = document.querySelector('form');
+    const err_msg = document.getElementById('err_msg');
+    let user = null;
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const formPurpose = form.dataset.purpose;
+
+      if (formPurpose === "connect") {
+        const key = form.elements.key.value;
+
+        try {
+          const connectResponse = await fetch('/api/auth/session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ key }),
+          });
+          if (!connectResponse.ok) {
+            console.error(connectResponse);
+            err_msg.textContent = connectResponse.detail || 'An error occurred';
+            return;
+          }
+
+          const response = await connectResponse.json();
+          user = {
+            this: response.participant_name,
+            key,
+            child_thread: response?.child_mission?.thread_id || null,
+            santa_thread: response?.santa_mission?.thread_id || null,
+          };
+
+          document.getElementById('info_msg').textContent = 'connected!';
+
+          const santaMessagesResponse = await fetch(`/api/threads/${user.santa_thread}/messages?key=${encodeURIComponent(user.key)}`);
+          if (!santaMessagesResponse.ok) {
+            console.error(santaMessagesResponse);
+            err_msg.textContent = santaMessagesResponse.detail || 'An error occurred';
+            return;
+          }
+          const santaMessages = await santaMessagesResponse.json();
+          console.log('previous santa messages:', santaMessages);
+
+          const childMessagesResponse = await fetch(`/api/threads/${user.child_thread}/messages?key=${encodeURIComponent(user.key)}`);
+          if (!childMessagesResponse.ok) {
+            console.error(childMessagesResponse);
+            err_msg.textContent = childMessagesResponse.detail || 'An error occurred';
+            return;
+          }
+          const childMessages = await childMessagesResponse.json();
+          console.log('previous child messages:', childMessages);
+
+          buildWSForm();
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      else if (user && user.key) {
+        if (formPurpose === "send_message") {
+          const msg = form.elements.message.value;
+
+          const response = await fetch(`/api/threads/${user.santa_thread}/messages`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ key: user.key, content: msg }),
+          });
+
+          if (!response.ok) {
+            console.error(response);
+            return;
+          }
+        }
+      }
+    });
+
+    const buildWSForm = () => {
+      form.dataset.purpose = 'send_message';
+      form.innerHTML = `
+        <input type="text" name="message" placeholder="Enter your message" required>
+        <button type="submit">Send</button>
+      `;
+
+      initWS();
+    };
+
+    const initWS = () => {
+      const santaWS = new WebSocket(`ws://localhost:8000/api/threads/${user.santa_thread}/ws?key=${encodeURIComponent(user.key)}`);
+      const childWS = new WebSocket(`ws://localhost:8000/api/threads/${user.child_thread}/ws?key=${encodeURIComponent(user.key)}`);
+
+      santaWS.onopen = () => { };
+      santaWS.onmessage = (event) => {
+        const data = event.data;
+        if (data.type === "connected") console.log('connected to santa thread');
+        else if (data.type === "new_message") {
+          const msgDiv = document.getElementById('ws_messages');
+          const newMsg = document.createElement('div');
+          newMsg.textContent = `Message from ${data.sender_role}: ${data.content}. At ${new Date(data.created_at).toLocaleString()}`;
+          msgDiv.appendChild(newMsg);
+        }
+      }
+
+      childWS.onopen = () => { };
+      childWS.onmessage = (event) => {
+        const data = event.data;
+        console.log(data);
+
+        if (data.type === "connected") console.log('connected to child thread');
+        else if (data.type === "new_message") {
+          const msgDiv = document.getElementById('ws_messages');
+          const newMsg = document.createElement('div');
+          newMsg.textContent = `Message from ${data.sender_role}: ${data.content}. At ${new Date(data.created_at).toLocaleString()}`;
+          msgDiv.appendChild(newMsg);
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

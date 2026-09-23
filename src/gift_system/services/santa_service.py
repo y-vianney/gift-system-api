@@ -4,7 +4,7 @@ import secrets
 from pathlib import Path
 from typing import Optional
 
-from ..config import DB_FILE, SECRET_SALT
+from ..config import SECRET_SALT
 from ..core.crypto import (
     generate_private_key,
     generate_thread_key,
@@ -19,7 +19,7 @@ from ..storage.repository import GiftRepository
 
 def load_employees_from_file(path: str | Path) -> list[tuple[str, str, str, str]]:
     """Parse employee text file format: name|email|status|visibility."""
-    employees = []
+    employees: list[tuple[str, str, str, str]] = []
     with open(path, encoding="utf-8") as handle:
         for line in handle:
             line = line.strip()
@@ -62,10 +62,10 @@ def build_and_save_assignments(
         raw_employees = load_employees_from_file(employees_path)
         active_employees = [e for e in raw_employees if e[2].lower() == "active"]
 
-        # Run matching algorithm
+        # run matching algorithm
         assignments = partition_and_match(active_employees)
 
-        # 1. Register participants with unique keys
+        # register participants with unique keys
         participant_ids: dict[str, int] = {}
         participant_keys: dict[str, str] = {}
         used_keys: set[str] = set()
@@ -82,7 +82,7 @@ def build_and_save_assignments(
             participant_ids[email] = p_id
             participant_keys[email] = raw_key
 
-        # 2. Register assignments and letterbox thread keys
+        # register assignments and letterbox thread keys
         result_keys: list[tuple[str, str, str, str]] = []
 
         for giver, receiver in assignments:
@@ -100,16 +100,20 @@ def build_and_save_assignments(
             giver_key = participant_keys[giver_email]
             result_keys.append((giver[0], giver[1], giver_key, receiver[0]))
 
-        # Set system state
+        # set system state
         repo.set_state("INITIALIZED", "TRUE")
 
-    # Optional email dispatch
+    # email dispatch
     if send_emails:
         for name, mail, key, _ in result_keys:
             try:
                 send_key_email(email=mail, name=name, key=key)
             except Exception as exc:
                 print(f"Erreur lors de l'envoi du mail à {mail}: {exc}")
+    else:
+        print("<!> L'envoi des emails est désactivé. Les clés ne seront pas envoyées par email.\n")
+        for name, mail, key, _ in result_keys:
+            print(f"Nom: {name}, Email: {mail}, Clé: {key}")
 
     return result_keys
 
@@ -162,7 +166,7 @@ def get_session_by_key(key: str) -> Optional[SessionResponse]:
         if receiver_assignment:
             child_mission = ChildMission(
                 thread_id=receiver_assignment.id,
-                santa_display="Père Noël Mystère 🎅",
+                santa_display="Père Noël Mystère",
             )
 
         return SessionResponse(

@@ -77,9 +77,9 @@ def get_thread_messages(thread_id: str, key: str) -> list[ThreadMessageDTO]:
             if is_mine:
                 display = "Vous"
             elif msg.sender_role == "SANTA":
-                display = "Père Noël 🎅"
+                display = "Père Noël"
             else:
-                display = "Votre Enfant 🎁"
+                display = "Votre Enfant"
 
             result.append(
                 ThreadMessageDTO(

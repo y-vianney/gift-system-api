@@ -8,21 +8,18 @@ from pathlib import Path
 if sys.platform == "win32":
     try:
         if hasattr(sys.stdout, "reconfigure"):
-            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore
         if hasattr(sys.stderr, "reconfigure"):
-            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")  # type: ignore
     except Exception:
         pass
 
-from .config import DB_FILE
 from .core.crypto import normalize_key
 from .services.chat_service import get_thread_messages, post_thread_message
 from .services.santa_service import (
     build_and_save_assignments,
     get_session_by_key,
-    is_system_initialized,
-    load_employees_from_file,
-    resolve_worker_name,
+    is_system_initialized
 )
 from .storage.database import get_db_connection, init_db
 
@@ -35,7 +32,7 @@ def run_build(file_path: str, send_emails: bool = False, force: bool = False) ->
             print(f"Erreur : Le fichier {file_path} est introuvable.")
             return
 
-        print(f"📦 Génération des assignations à partir de {file_path}...")
+        print(f"<> Génération des assignations à partir de {file_path}...")
         keys = build_and_save_assignments(path, send_emails=send_emails, force_reset=force)
 
         # Write keys log for administrator reference
@@ -44,14 +41,14 @@ def run_build(file_path: str, send_emails: bool = False, force: bool = False) ->
                 handle.write(f"{giver} | {mail} | {key} | {receiver}\n")
 
         elapsed = time.time() - start
-        print(f"✅ Assignations générées avec succès ({len(keys)} participants).")
-        print(f"📝 Journal des clés enregistré dans 'keys_log.log'.")
-        print(f"⏱️ Temps écoulé : {round(elapsed, 2)} secondes.")
+        print(f"<--> Assignations générées avec succès ({len(keys)} participants).")
+        print(f"# Journal des clés enregistré dans 'keys_log.log'.")
+        print(f"... Temps écoulé : {round(elapsed, 2)} secondes.")
     except RuntimeError as exc:
-        print(f"⚠️ {exc}")
+        print(f"!! {exc}")
         print("Utilisez --force pour réinitialiser complètement les assignations.")
     except Exception as exc:
-        print(f"❌ Erreur inattendue : {exc}")
+        print(f"#!! Erreur inattendue : {exc}")
 
 
 def run_view() -> None:
@@ -59,11 +56,11 @@ def run_view() -> None:
     key = normalize_key(raw_key)
     session = get_session_by_key(key)
     if session and session.santa_mission:
-        print(f"\n✨ Bonjour {session.participant_name} !")
-        print(f"🎁 Vous êtes le Père Noël de : {session.santa_mission.target_name}")
-        print("🤫 Gardez ce nom strictement secret !")
+        print(f"\n** Bienvenue {session.participant_name} !")
+        print(f"#* Vous êtes le Père Noël de : {session.santa_mission.target_name}")
+        print(";) Gardez ce nom strictement secret !")
     else:
-        print("❌ Clé invalide ou aucune assignation trouvée.")
+        print("<!> Clé invalide ou aucune assignation trouvée.")
 
 
 def run_chat() -> None:
@@ -71,10 +68,10 @@ def run_chat() -> None:
     key = normalize_key(raw_key)
     session = get_session_by_key(key)
     if not session:
-        print("❌ Clé invalide.")
+        print("<!> Clé invalide.")
         return
 
-    print(f"\n📬 Boîte aux lettres secrète de {session.participant_name}")
+    print(f"\n>> Boîte aux lettres secrète de {session.participant_name}")
     print("1. Messages avec votre Enfant (à qui vous offrez)")
     print("2. Messages avec votre Père Noël Mystère")
     choice = input("Votre choix (1 ou 2) : ").strip()
@@ -86,7 +83,7 @@ def run_chat() -> None:
         role_label = f"votre Enfant ({session.santa_mission.target_name})"
     elif choice == "2" and session.child_mission:
         thread_id = session.child_mission.thread_id
-        role_label = "votre Père Noël Mystère 🎅"
+        role_label = "votre Père Noël Mystère :o"
     else:
         print("Choix invalide.")
         return
@@ -103,7 +100,7 @@ def run_chat() -> None:
     text = input(">> ").strip()
     if text:
         post_thread_message(thread_id, key, text)
-        print("✅ Message envoyé avec succès !")
+        print("<> Message envoyé avec succès !")
 
 
 def run_status() -> None:
@@ -122,7 +119,7 @@ def run_status() -> None:
 
 def run_serve(host: str = "0.0.0.0", port: int = 8000) -> None:
     import uvicorn
-    print(f"🚀 Démarrage du serveur Gift System sur http://{host}:{port}")
+    print(f"###> Démarrage du serveur Gift System sur http://{host}:{port}")
     uvicorn.run("gift_system.api:app", host=host, port=port, reload=False)
 
 

@@ -49,6 +49,10 @@ class KeyRequest(BaseModel):
     )
 
 
+class PingResponse(BaseModel):
+    status: str = "ok"
+
+
 class WorkerResponse(BaseModel):
     worker_name: str
 
@@ -61,7 +65,7 @@ class SantaMission(BaseModel):
 
 class ChildMission(BaseModel):
     thread_id: str
-    santa_display: str = "Père Noël Mystère 🎅"
+    santa_display: str = "Père Noël Mystère"
 
 
 class SessionResponse(BaseModel):
