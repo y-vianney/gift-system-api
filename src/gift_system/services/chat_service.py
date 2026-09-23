@@ -111,7 +111,10 @@ def post_thread_message(thread_id: str, key: str, content: str) -> ThreadMessage
 
     init_db()
     with get_db_connection() as conn:
-        repo = GiftRepository(conn)else
+        repo = GiftRepository(conn)
+        if not repo:
+            raise RuntimeError("Impossible d'initialiser le dépôt de données.")
+
         k_hash = hash_key(key, salt=SECRET_SALT)
         participant = repo.get_participant_by_key_hash(k_hash)
         if not participant:

@@ -68,33 +68,33 @@ src/gift_system/
 
 - **Generate assignments**:
   ```bash
-  python -m gift_system.cli build data/employees.txt
+  python -m src.gift_system.cli build data/employees.txt
   ```
   *(To send notification emails directly, add `--send-emails`. To overwrite existing state, add `--force`)*
 
 - **Check system status**:
   ```bash
-  python -m gift_system.cli status
+  python -m src.gift_system.cli status
   ```
 
 - **View assignment (as a participant)**:
   ```bash
-  python -m gift_system.cli view
+  python -m src.gift_system.cli view
   ```
 
 - **Chat / Letterbox in CLI**:
   ```bash
-  python -m gift_system.cli chat
+  python -m src.gift_system.cli chat
   ```
 
-- **Start Web Application & API**:
+- **Start Server**:
   ```bash
-  python -m gift_system.cli serve --port 8000
+  python -m src.gift_system.cli serve --port 8000
   ```
 
 ---
 
-### 2. Web Application & REST API
+### 2. REST API
 
 Run the server:
 ```bash
@@ -108,7 +108,7 @@ uvicorn gift_system.api:app --reload
 - `GET /api/threads/{thread_id}/messages?key=...` : Reads encrypted messages in a thread.
 - `POST /api/threads/{thread_id}/messages` : Posts a message as Santa or Child (and triggers instant WS broadcast).
 - `POST /worker-name` : Legacy endpoint returning `{"worker_name": "..."}`.
-- `GET /` : Health check or Web UI.
+- `GET /` : Health check, mainly.
 
 ---
 
@@ -143,19 +143,6 @@ WS /api/threads/{thread_id}/ws?key={participant_private_key}
    ```
 4. **Heartbeat / Ping**:
    Send `{ "type": "ping" }` $\to$ receives `{ "type": "pong" }`.
-
-#### Frontend (React / Vue / Vanilla JS) Example:
-```javascript
-const ws = new WebSocket(`wss://api.domain.com/api/threads/${threadId}/ws?key=${privateKey}`);
-
-ws.onmessage = (event) => {
-  const data = JSON.parse(event.data);
-  if (data.type === 'new_message') {
-    // Append message to chat or trigger refresh
-    console.log('Nouveau message reçu:', data.message);
-  }
-};
-```
 
 ---
 

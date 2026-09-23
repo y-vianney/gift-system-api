@@ -7,9 +7,12 @@ from .services.santa_service import (
     resolve_worker_name as resolve_assignment,
 )
 
+from .cli import run_build
+
 __all__ = [
     "build_assignments",
     "generate_assignments",
     "load_employees",
     "resolve_assignment",
+    "run_build",
 ]

@@ -11,7 +11,7 @@ ENV = os.getenv("GS_ENV", "dev").lower()
 IS_PROD = ENV == "prod"
 
 # Persistent storage directory
-BASE_DIR = Path(os.getenv("GS_BASE_DIR", str(Path.home() / ".gs-project_internal"))).expanduser()
+BASE_DIR = Path(os.getenv("GS_BASE_DIR", str(Path.cwd() / ".gs-project_internal"))).expanduser()
 BASE_DIR.mkdir(parents=True, exist_ok=True)
 
 # SQLite Database path

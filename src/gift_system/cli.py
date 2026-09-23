@@ -24,7 +24,7 @@ from .services.santa_service import (
 from .storage.database import get_db_connection, init_db
 
 
-def run_build(file_path: str, send_emails: bool = False, force: bool = False) -> None:
+def run_build(file_path: str, send_emails: bool = False, log_keys: bool = False, force: bool = False) -> None:
     try:
         start = time.time()
         path = Path(file_path)
@@ -33,16 +33,17 @@ def run_build(file_path: str, send_emails: bool = False, force: bool = False) ->
             return
 
         print(f"<> Génération des assignations à partir de {file_path}...")
-        keys = build_and_save_assignments(path, send_emails=send_emails, force_reset=force)
+        keys = build_and_save_assignments(path, send_emails=send_emails, log_keys=log_keys, force_reset=force)
 
         # Write keys log for administrator reference
-        with open("keys_log.log", "w", encoding="utf-8") as handle:
-            for giver, mail, key, receiver in keys:
-                handle.write(f"{giver} | {mail} | {key} | {receiver}\n")
+        if log_keys:
+            with open("keys_log.log", "w", encoding="utf-8") as handle:
+                for giver, mail, key, receiver in keys:
+                    handle.write(f"{giver} | {mail} | {key} | {receiver}\n")
+                print(f"# Journal des clés enregistré dans 'keys_log.log'.")
 
         elapsed = time.time() - start
         print(f"<--> Assignations générées avec succès ({len(keys)} participants).")
-        print(f"# Journal des clés enregistré dans 'keys_log.log'.")
         print(f"... Temps écoulé : {round(elapsed, 2)} secondes.")
     except RuntimeError as exc:
         print(f"!! {exc}")
@@ -132,6 +133,7 @@ def main() -> int:
     build_parser.add_argument("file", help="Chemin vers le fichier des employés (ex: data/employees.txt)")
     build_parser.add_argument("--send-emails", action="store_true", help="Envoyer les emails de notification")
     build_parser.add_argument("--force", action="store_true", help="Forcer la réinitialisation si déjà initialisé")
+    build_parser.add_argument("--log-keys", action="store_true", help="Afficher les clés dans la console")
 
     # view
     subparsers.add_parser("view", help="Consulter son attribution avec sa clé privée")
@@ -150,7 +152,7 @@ def main() -> int:
     args = parser.parse_args()
 
     if args.command == "build":
-        run_build(args.file, send_emails=args.send_emails, force=args.force)
+        run_build(args.file, send_emails=args.send_emails, log_keys=args.log_keys, force=args.force)
         return 0
     elif args.command == "view":
         run_view()

@@ -43,6 +43,7 @@ def is_system_initialized() -> bool:
 def build_and_save_assignments(
     employees_path: str | Path,
     send_emails: bool = False,
+    log_keys: bool = True,
     force_reset: bool = False,
 ) -> list[tuple[str, str, str, str]]:
     """
@@ -110,7 +111,8 @@ def build_and_save_assignments(
                 send_key_email(email=mail, name=name, key=key)
             except Exception as exc:
                 print(f"Erreur lors de l'envoi du mail à {mail}: {exc}")
-    else:
+    
+    if log_keys:
         print("<!> L'envoi des emails est désactivé. Les clés ne seront pas envoyées par email.\n")
         for name, mail, key, _ in result_keys:
             print(f"Nom: {name}, Email: {mail}, Clé: {key}")

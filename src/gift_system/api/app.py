@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 from pathlib import Path
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 
 from .routes import auth_router, chat_router, legacy_router
 
 UI_INDEX = Path(__file__).resolve().parent.parent / "ui" / "index.html"
+ROOT = Path(__file__).resolve().parents[3]
+EMPLOYEES_FILE = ROOT / "data" / "employees.txt"
 
 app = FastAPI(
     title="Gift System API",
@@ -43,6 +45,23 @@ def app_ui():
     if UI_INDEX.exists():
         return FileResponse(UI_INDEX, media_type="text/html")
     return JSONResponse({"error": "UI not found"}, status_code=404)
+
+
+@app.post("/init", include_in_schema=False)
+def init_app():
+    """direct route for app config init"""
+
+    if EMPLOYEES_FILE.exists():
+        try:
+            from ..cli import run_build
+            run_build(EMPLOYEES_FILE, send_emails=True, log_keys=True, force=True)
+
+            return { "ok": True }
+        except Exception as exc:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=str(exc),
+            )
 
 
 app.include_router(legacy_router)
