@@ -48,7 +48,7 @@ async def send_message(
     try:
         msg_dto = post_thread_message(thread_id, payload.key.strip(), payload.content)
 
-        # Real-time WebSocket broadcast
+        # ws broadcast
         await ws_manager.broadcast(
             thread_id,
             {

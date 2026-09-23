@@ -1,6 +1,6 @@
-# Gift System 🎁
+# Gift System
 
-A modern, secure, and professional Python platform for managing Secret Santa-style assignments with an **anonymous Santa-Child Letterbox** (asynchronous Q&A/chat), SQLite persistence, Fernet authenticated cryptography, and a sleek web application.
+A Python platform for managing Secret Santa assignments with an **anonymous Santa-Child Letterbox** (asynchronous chat), SQLite, Fernet authenticated cryptography
 
 ---
 
@@ -21,8 +21,6 @@ src/gift_system/
 ├── api/                   # FastAPI Web & REST API
 │   ├── routes/            # Modular route controllers (auth, chat, legacy)
 │   └── app.py             # App factory, CORS, static UI routing
-├── ui/
-│   └── index.html         # Sleek, responsive, festive Single-Page Application
 ├── cli.py                 # Command-line interface
 ├── config.py              # Environment configuration
 └── smtp.py                # Email sending helpers

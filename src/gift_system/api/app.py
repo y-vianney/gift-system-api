@@ -12,10 +12,10 @@ UI_INDEX = Path(__file__).resolve().parent.parent / "ui" / "index.html"
 app = FastAPI(
     title="Gift System API",
     version="2.0.0",
-    description="Professional Secret Santa Assignment & Anonymous Letterbox API",
+    description="secret santa assignment & anonymous letterbox API",
 )
 
-# CORS Configuration
+# cors configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -28,24 +28,23 @@ app.add_middleware(
 @app.get("/", include_in_schema=False)
 def index_or_ping(request: Request):
     """
-    Serve the modern web UI for browser requests (Accept: text/html),
-    or return standard health status JSON for API clients.
+    serve the modern web UI for browser requests (Accept: text/html),
+    or return standard health status JSON for API clients
     """
     accept = request.headers.get("accept", "")
     if "text/html" in accept and UI_INDEX.exists():
         return FileResponse(UI_INDEX, media_type="text/html")
-    return JSONResponse({"status": "ok", "app": "Gift System", "version": "2.0.0"})
+    return JSONResponse({ "status": "ok", "app": "Gift System", "version": "2.0.0" })
 
 
 @app.get("/app", include_in_schema=False)
 def app_ui():
-    """Direct route for web application UI."""
+    """direct route for web application UI"""
     if UI_INDEX.exists():
         return FileResponse(UI_INDEX, media_type="text/html")
     return JSONResponse({"error": "UI not found"}, status_code=404)
 
 
-# Include modular routers
 app.include_router(legacy_router)
 app.include_router(auth_router)
 app.include_router(chat_router)

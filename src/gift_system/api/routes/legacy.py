@@ -29,7 +29,7 @@ def test_view() -> FileResponse:
     Serve a simple HTML page for testing the API.
     """
 
-    return FileResponse("src/gift_system/static/index.html", media_type="text/html")
+    return FileResponse("gift_system/static/index.html", media_type="text/html")
 
 
 @router.post("/worker-name", response_model=WorkerResponse)
