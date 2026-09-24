@@ -18,4 +18,4 @@ RUN pip install --no-cache-dir -e .
 EXPOSE 8000
 
 # Production launch
-CMD ["uvicorn", "gift_system.api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "src.gift_system.api:app", "--host", "0.0.0.0", "--port", "8000"]
